@@ -1,0 +1,77 @@
+﻿@using Shop.Models
+@model ProfileViewModel
+@{
+    ViewBag.Title = "My Profile";
+    List<Order> orders = ViewBag.Orders;
+}
+
+<div class="top-container">
+    <h1 class="header">@Model.FirstName @Model.LastName</h1>
+</div>
+
+<section id="profile" class="page-containter">
+    <div class="my-account">
+        <h2>My Account</h2>
+        @using (Html.BeginForm("UpdateAccount", "Home", FormMethod.Post, new { @class = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="form-item">
+                @Html.LabelFor(u => u.FirstName)
+                @Html.TextBoxFor(o => o.FirstName)
+                @Html.ValidationMessageFor(o => o.FirstName)
+            </div>
+            <div class="form-item">
+                @Html.LabelFor(u => u.LastName)
+                @Html.TextBoxFor(o => o.LastName)
+                @Html.ValidationMessageFor(o => o.LastName)
+            </div>
+            <div class="form-item">
+                @Html.LabelFor(u => u.Address)
+                @Html.TextBoxFor(o => o.Address)
+                @Html.ValidationMessageFor(o => o.Address)
+            </div>
+            <div class="form-item">
+                @Html.LabelFor(u => u.PostCode)
+                @Html.TextBoxFor(o => o.PostCode)
+                @Html.ValidationMessageFor(o => o.PostCode)
+            </div>
+            <div class="form-item">
+                @Html.LabelFor(u => u.City)
+                @Html.TextBoxFor(o => o.City)
+                @Html.ValidationMessageFor(o => o.City)
+            </div>
+            <div class="form-item">
+                @Html.LabelFor(u => u.PhoneNumber)
+                @Html.TextBoxFor(o => o.PhoneNumber)
+                @Html.ValidationMessageFor(o => o.PhoneNumber)
+            </div>
+            <div class="form-item">
+                <button type="submit">Update Account</button>
+            </div>
+        }
+    </div>
+    <div class="my-orders">
+        <div class="orders">
+            <h2>My Orders</h2>
+            @if (orders != null && orders.Count > 0)
+            {
+                foreach (Order order in ViewBag.Orders)
+                {
+                    <div class="order">
+                        <a href="@Url.Action("OrderCreated", "Order", new { id = order.Id })">
+                            @order.Created.ToString("dd.MM.yyyy hh:mm tt")
+                        </a>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="order">
+                    <a href="@Url.Action("Index", "Home")" title="Go to home page">
+                        No Orders
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</section>

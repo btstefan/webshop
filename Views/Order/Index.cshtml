@@ -1,0 +1,55 @@
+﻿@using Shop.Models
+@model Shop.Models.ViewModels.AddOrderViewModel
+@{
+    ViewBag.Title = "Order";
+    List<PaymentType> paymentTypes = ViewBag.Payments;
+}
+<div class="top-container">
+    <h1 class="header">Order</h1>
+</div>
+
+<div id="order" class="page-containter">
+    @using (Html.BeginForm("CreateOrder", "Order", FormMethod.Post, new { @class = "form" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="form-item">
+            @Html.LabelFor(o => o.ShippingFirstName)
+            @Html.TextBoxFor(o => o.ShippingFirstName)
+            @Html.ValidationMessageFor(o => o.ShippingFirstName)
+        </div>
+        <div class="form-item">
+            @Html.LabelFor(o => o.ShippingLastName)
+            @Html.TextBoxFor(o => o.ShippingLastName)
+            @Html.ValidationMessageFor(o => o.ShippingLastName)
+        </div>
+        <div class="form-item">
+            @Html.LabelFor(o => o.ShippingAddress)
+            @Html.TextBoxFor(o => o.ShippingAddress)
+            @Html.ValidationMessageFor(o => o.ShippingAddress)
+        </div>
+        <div class="form-item">
+            @Html.LabelFor(o => o.ShippingPostCode)
+            @Html.TextBoxFor(o => o.ShippingPostCode)
+            @Html.ValidationMessageFor(o => o.ShippingPostCode)
+        </div>
+        <div class="form-item">
+            @Html.LabelFor(o => o.ShippingCity)
+            @Html.TextBoxFor(o => o.ShippingCity)
+            @Html.ValidationMessageFor(o => o.ShippingCity)
+        </div>
+        <div class="form-item">
+            @Html.LabelFor(o => o.ShippingPhone)
+            @Html.TextBoxFor(o => o.ShippingPhone)
+            @Html.ValidationMessageFor(o => o.ShippingPhone)
+        </div>
+        <div class="form-item">
+            @Html.LabelFor(o => o.PaymentTypeId)
+            @Html.DropDownListFor(o => o.PaymentTypeId, new SelectList(paymentTypes, "Id", "Name"))
+            @Html.ValidationMessageFor(o => o.PaymentTypeId)
+        </div>
+        <div class="form-item" style="text-align: right;">
+            <a href="@Url.Action("Index", "Cart")">Cancel</a>
+            <button type="submit">Submit order</button>
+        </div>
+    }
+</div>

@@ -1,0 +1,56 @@
+﻿@model Shop.Models.ViewModels.AdminViewModel
+@{
+    ViewBag.Title = "Admin panel";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="main-header">
+            <h4>Dashboard</h4>
+        </div>
+    </div>
+    <!-- 4-blocks row start -->
+    <div class="row dashboard-header col-lg-12 p-50">
+        <div class="col-lg-6 col-md-6">
+            <div class="card dashboard-product">
+                <span><a href="@Url.Action("Index", "Products")">Products</a></span>
+                <h2 class="dashboard-total-products">@Model.ProductCount</h2>
+                <span class="p-10"></span>
+                <div class="side-box">
+                    <i class="ti-rocket text-warning-color"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6">
+            <div class="card dashboard-product">
+                <span><a href="@Url.Action("Index", "Users")">Users</a></span>
+                <h2 class="dashboard-total-products">@Model.UsersCount</h2>
+                <span class="p-10"></span>
+                <div class="side-box ">
+                    <i class="ti-user text-primary-color"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6">
+            <div class="card dashboard-product">
+                <span><a href="@Url.Action("Index", "Orders")">Orders</a></span>
+                <h2 class="dashboard-total-products"><span>@Model.OrderCount</span></h2>
+                <span class="label label-success">@Model.ActiveOrders</span>Open
+                <div class="side-box">
+                    <i class="ti-shopping-cart text-success-color"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6">
+            <div class="card dashboard-product">
+                <span><a href="@Url.Action("Index", "Categories")">Categories</a></span>
+                <h2 class="dashboard-total-products"><span>@Model.CategoryCount</span></h2>
+                <span class="label label-danger">@Model.CategoryActiveCount</span>Active
+                <div class="side-box">
+                    <i class="ti-tag text-danger-color"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Main content ends -->

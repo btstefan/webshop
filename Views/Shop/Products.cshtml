@@ -1,0 +1,118 @@
+﻿@model Shop.Models.ProductPage
+@{
+    ViewBag.Title = ViewBag.Category.Name;
+    string orderBy = Request.QueryString["orderBy"];
+    string search = Request.QueryString["search"];
+    int pageItems = Model.PageSize;
+    List<Shop.Models.Category> parents = ViewBag.Parents;
+}
+
+<div class="top-container">
+    <h1>@ViewBag.Category.Name</h1>
+
+    <div class="path">
+        @if (parents != null && parents.Count > 0)
+        {
+            foreach (var p in parents)
+            {
+                <a class="ctg-link" href="@Url.Action("Products", "Shop", new { categoryId = p.Id })">@p.Name</a><i class="fas fa-long-arrow-alt-right"></i>
+            }
+        }
+        <a class="ctg-link active-ctg" href="@Url.Action("Products", "Shop", new { categoryId = @ViewBag.Category.Id })">@ViewBag.Category.Name</a>
+    </div>
+</div>
+
+<section id="products">
+    <div class="filter-menu">
+        @using (Html.BeginForm("Products", "Shop", FormMethod.Get, new { id = "search-product-form" }))
+        {
+            <input id="page-num" type="hidden" name="page" value="" />
+            <div class="left">
+                <select id="orderList" class="order-list" name="orderBy">
+                    <option value="">Default sorting</option>
+                    <option value="price">Price: Low to High</option>
+                    <option value="price_desc">Price: High to Low</option>
+                    <option value="name">Name: Ascending</option>
+                    <option value="name_desc">Name: Descending</option>
+                    <option value="date_desc">Newest</option>
+                    <option value="date">Oldest</option>
+                </select>
+                <select name="count" class="page-count">
+                    <option value="8">8</option>
+                    <option value="12">12</option>
+                    <option value="24">24</option>
+                </select>
+            </div>
+
+            <div class="right">
+                <input name="search" type="search" class="search-txt" placeholder="Search..." value="@search" />
+                <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
+            </div>
+        }
+    </div>
+
+    @if (Model.Products != null && Model.Products.Count > 0)
+    {
+        <div class="product-list">
+            @foreach (var p in Model.Products)
+            {
+                <!-- PRODUCT-->
+                <article class="product">
+                    <div class="product-image">
+                        <img class="img-fluid w-100" src="~/Upload/img/products/thumbnails/@p.Thumbnail" alt="...">
+                    </div>
+                    <div class="product-info">
+                        <div class="product-details" title="@p.Name">
+                            <div class="name">@p.Name</div>
+                            <div class="price">@p.Price @p.Currency.Sign</div>
+                        </div>
+                        <div class="add-product">
+                            <a class="addToCart-btn" href="@Url.Action("AddToCart", "Cart", new { id = p.Id })">Add to cart</a>
+                        </div>
+                    </div>
+                    <a href="@Url.Action("Product", "Shop", new { id = p.Id })" class="product-link"></a>
+                </article>
+            }
+        </div>
+
+        <div class="page-menu">
+            @if (Model.CurrentPage > 1)
+            {
+                <a class="page-btn" href="" page="@(Model.CurrentPage - 1)">
+                    <i class="fas fa-angle-left"></i>
+                </a>
+            }
+            @for (int i = 1; i <= Model.LastPage; i++)
+            {
+                <a href="" class="@(Model.CurrentPage == @i ? "active-page" : "") page-btn" page="@i" )>
+                    @i
+                </a>
+            }
+            @if (Model.CurrentPage < Model.LastPage)
+            {
+                <a class="page-btn" href="" page="@(Model.CurrentPage + 1)">
+                    <i class="fas fa-angle-right"></i>
+                </a>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="empty-list">No products were found.</p>
+    }
+    @section scripts {
+        <script type="text/javascript">
+        $(document).ready(function () {
+            $("#orderList").val("@orderBy");
+            $(".page-count").val("@pageItems");
+        });
+
+        $(".page-btn").click(function (e) {
+            e.preventDefault();
+            var page = $(this).attr("page");
+            $("#page-num").val(page);
+            $("#search-product-form").submit();
+        });
+        </script>
+    }
+</section>

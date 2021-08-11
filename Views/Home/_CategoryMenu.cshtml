@@ -1,0 +1,62 @@
+﻿@using Shop.Models
+@model List<CategoryTree>
+@{
+    RenderTree(Model);
+}
+
+@functions {
+    List<string> menu = new List<string>();
+
+    void RenderTree(List<CategoryTree> list)
+    {
+        foreach (var item in list)
+        {
+            if (item.Category.Active)
+            {
+                menu.Add($"<li class=\"category-item\"><a href=\"" +
+                    $"{Url.Action("Products", "Shop", new { categoryId = item.Category.Id })}\">{item.Category.Name}");
+
+                if (item.SubCategories != null && item.SubCategories.Count > 0)
+                {
+                    menu.Add(" <i class=\"fas fa-angle-right\"></i></a>");
+                    menu.Add($"<ul class=\"sub\">");
+                    RenderTree(item.SubCategories);
+                    menu.Add($"</ul>");
+                }
+                else
+                {
+                    menu.Add("</a>");
+                }
+                menu.Add("</li>");
+            }
+        }
+    }
+}
+
+<ul class="sub">
+    @foreach (var x in menu)
+    {
+        @Html.Raw(x)
+    }
+</ul>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $width = 1100;
+        $("li").hover(function () {
+            if ($(window).width() > $width) {
+                $(this).children(".sub").show();
+            }
+        }, function () {
+            if ($(window).width() > $width) {
+                $(this).children("ul.sub").hide();
+            }
+        });
+        $("li a i").click(function (e) {
+            if ($(window).width() <= $width) {
+                e.preventDefault();
+                $(this).parent().parent().children(".sub").toggleClass("active");
+            }
+        });
+    });
+</script>

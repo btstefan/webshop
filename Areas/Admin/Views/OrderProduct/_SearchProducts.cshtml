@@ -1,0 +1,17 @@
+﻿@model Shop.Models.ProductPage
+
+<table class="table">
+    <tbody>
+        @foreach (var p in Model.Products)
+        {
+            <tr class="width-100">
+                <td>@p.Name</td>
+                <td><a class="add-to-order" href="#" product-id="@p.Id">Add</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<style>
+
+</style>

@@ -1,0 +1,47 @@
+﻿@model Shop.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Register";
+}
+
+
+
+<div class="top-container">
+    <h1 class="header">@ViewBag.Title</h1>
+</div>
+
+<section id="loginForm" class="auth-form">
+    @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form", role = "form" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-item" style="grid-column: 1/3">
+            @Html.LabelFor(m => m.FirstName)
+            @Html.TextBoxFor(m => m.FirstName)
+            @Html.ValidationMessageFor(m => m.FirstName)
+        </div>
+        <div class="form-item" style="grid-column: 3/5">
+            @Html.LabelFor(m => m.LastName)
+            @Html.TextBoxFor(m => m.LastName)
+            @Html.ValidationMessageFor(m => m.LastName)
+        </div>
+        <div class="form-item">
+            @Html.LabelFor(m => m.Email)
+            @Html.TextBoxFor(m => m.Email)
+            @Html.ValidationMessageFor(m => m.Email)
+        </div>
+        <div class="form-item">
+            @Html.LabelFor(m => m.Password)
+            @Html.PasswordFor(m => m.Password)
+            @Html.ValidationMessageFor(m => m.Password)
+        </div>
+        <div class="form-item">
+            @Html.LabelFor(m => m.ConfirmPassword)
+            @Html.PasswordFor(m => m.ConfirmPassword)
+            @Html.ValidationMessageFor(m => m.ConfirmPassword)
+        </div>
+        <div class="form-item">
+            <input type="submit" value="Register" class="btn btn-default" />
+        </div>
+        <a class="link" href="@Url.Action("Login")">Login</a>
+    }
+</section>

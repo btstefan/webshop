@@ -1,0 +1,217 @@
+﻿@using Shop.Models
+@using Shop.Models.ViewModels
+@model EditOrderViewModel
+@{
+    ViewBag.Title = "Edit Order";
+    List<PaymentType> paymentTypes = ViewBag.Payments;
+    List<OrderStatus> statusTypes = ViewBag.StatusTypes;
+    List<OrderProduct> orderProducts = ViewBag.OrderItems;
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="main-header">
+            <h4>Edit Order</h4>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card card-block p-40">
+                @using (Html.BeginForm("Edit", "Orders", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(o => o.Id)
+                    <div class="form-group col-md-6">
+                        @Html.LabelFor(o => o.ShippingFirstName)
+                        @Html.TextBoxFor(o => o.ShippingFirstName, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(o => o.ShippingFirstName)
+                    </div>
+                    <div class="form-group col-md-6">
+                        @Html.LabelFor(o => o.ShippingLastName)
+                        @Html.TextBoxFor(o => o.ShippingLastName, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(o => o.ShippingLastName)
+                    </div>
+                    <div class="form-group col-md-12">
+                        @Html.LabelFor(o => o.ShippingAddress)
+                        @Html.TextBoxFor(o => o.ShippingAddress, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(o => o.ShippingAddress)
+                    </div>
+                    <div class="form-group col-md-4">
+                        @Html.LabelFor(o => o.ShippingPostCode)
+                        @Html.TextBoxFor(o => o.ShippingPostCode, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(o => o.ShippingPostCode)
+                    </div>
+                    <div class="form-group col-md-8">
+                        @Html.LabelFor(o => o.ShippingCity)
+                        @Html.TextBoxFor(o => o.ShippingCity, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(o => o.ShippingCity)
+                    </div>
+                    <div class="form-group col-md-12">
+                        @Html.LabelFor(o => o.ShippingPhone)
+                        @Html.TextBoxFor(o => o.ShippingPhone, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(o => o.ShippingPhone)
+                    </div>
+                    <div class="form-group col-md-6">
+                        @Html.LabelFor(o => o.PaymentTypeId)
+                        @Html.DropDownListFor(o => o.PaymentTypeId, new SelectList(paymentTypes, "Id", "Name"), new { @class = "form-control" })
+                        @Html.ValidationMessageFor(o => o.PaymentTypeId)
+                    </div>
+                    <div class="form-group col-md-6">
+                        @Html.LabelFor(o => o.OrderStatusId)
+                        @Html.DropDownListFor(o => o.OrderStatusId, new SelectList(statusTypes, "Id", "Name"), new { @class = "form-control" })
+                        @Html.ValidationMessageFor(o => o.OrderStatusId)
+                    </div>
+                    <div class="form-group col-md-12 p-t-20">
+                        <button type="submit" class="btn btn-primary m-r-10">Update details</button>
+                        <a href="@Url.Action("Details", "Orders", new { Model.Id })">Cancel</a>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <div class="card card-block p-40">
+                <table class="table m-b-0 photo-table">
+                    <thead>
+                        <tr class="text-uppercase">
+                            <th></th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Subtotal</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var product in orderProducts)
+                        {
+                            <tr>
+                                <th>
+                                    @if (product.Product != null)
+                                    {
+                                        <img class="img-fluid" src="~/Upload/img/products/thumbnails/@product.Product.Thumbnail" alt="Product">
+                                    }
+                                </th>
+                                <td>
+                                    <a href="@Url.Action("Edit", "Products", new { id = product.ProductId })" target="_blank">@product.Name</a>
+                                </td>
+                                <td class="text-nowrap">@product.Price @product.Currency.Sign</td>
+                                <td class="text-center">@product.Count</td>
+                                <td class="text-nowrap">@product.Subtotal @product.Currency.Sign</td>
+                                <td class="text-nowrap">
+                                    <a href="@Url.Action("Edit", "OrderProduct", new { id = product.Id })" class="text-info edit-item" item-id="@product.Id"><i class="ti-pencil-alt"></i></a>
+                                    <a href="@Url.Action("Delete", "OrderProduct", new { id = product.Id, orderId = Model.Id })" class="text-danger delete-item"><i class="ti-trash"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <a href="#" class="btn btn-info add-item">Add item</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Delete Order Item
+            $(document).on('click', '.delete-item', function (e) {
+                e.preventDefault();
+                var link = $(this).attr("href");
+
+                bootbox.confirm({
+                    title: "Delete product from order?",
+                    message: "Do you want to delete this order item? This cannot be undone.",
+                    buttons: {
+                        cancel: {
+                            label: 'No'
+                        },
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger m-l-20'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            window.location = link;
+                        }
+                    }
+                }).find('.modal-content').css({
+                    'margin-top': function () {
+                        var w = $(window).height();
+                        var b = $(".modal-dialog").height();
+                        var h = (w - b) / 2 - 100;
+                        return h + "px";
+                    }
+                });
+            });
+
+            // Show edit form on click
+            $(document).on('click', '.edit-item', function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '@Url.Action("Edit", "OrderProduct")',
+                    data: {
+                        id: $(this).attr("item-id")
+                    },
+                    method: 'get',
+                    dataType: 'html',
+                }).done(function (data) {
+                    $("#edit-modal .modal-title").text("Edit Order Item");
+                    $("#edit-view").html(data);
+                    $("#edit-modal").show();
+                });
+            });
+
+            $(".add-item").click(function () {
+                $.ajax({
+                    url: '@Url.Action("Add", "OrderProduct")',
+                    data: {
+                        id: $(this).attr("item-id")
+                    },
+                    method: 'get',
+                    dataType: 'html',
+                }).done(function (data) {
+                    $("#edit-modal .modal-title").text("Add Order Item");
+                    $("#edit-view").html(data);
+                    $("#edit-modal").show();
+                });
+            });
+
+            $("#edit-modal .close").click(closeModal);
+
+            function closeModal() {
+                $("#edit-modal").hide();
+            }
+
+
+            $(document).on("click", ".add-to-order", function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '@Url.Action("Add", "OrderProduct")',
+                    data: {
+                        orderId: @Model.Id,
+                        productId: $(this).attr("product-id")
+                    },
+                    method: 'post',
+                    dataType: 'html',
+                }).done(function () {
+                    location.reload();
+                });
+            });
+        });
+    </script>
+
+    <div class="modal" id="edit-modal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="edit-view" class="modal-body p-40">
+                    @*@Html.Partial("EditCategoryForm")*@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

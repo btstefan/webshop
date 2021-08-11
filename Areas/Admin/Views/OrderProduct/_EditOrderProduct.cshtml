@@ -1,0 +1,38 @@
+﻿@using Shop.Models
+@model OrderProduct
+
+@{
+    List<CategoryTree> categoryTree = ViewBag.CategoryTree;
+}
+
+@using (Html.BeginForm("Edit", "OrderProduct", FormMethod.Post, new { id = "edit-item-form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Id)
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Name)
+        @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Count)
+        @Html.TextBoxFor(m => m.Count, new { @class = "form-control", @type = "number", @min = "1" })
+        @Html.ValidationMessageFor(m => m.Count, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Price)
+        @Html.TextBoxFor(m => m.Price, new { @class = "form-control", @type = "number", @min = "0" })
+        @Html.ValidationMessageFor(m => m.Price, "", new { @class = "text-danger" })
+    </div>
+    
+    <button type="submit" id="update-item-btn" class="btn btn-primary col-md-12">Update</button>
+    <br/><br/>
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.validator.unobtrusive.parse("#edit-item-form");
+    });
+</script>
+

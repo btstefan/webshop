@@ -1,0 +1,68 @@
+﻿@using Shop.Models
+@model Order
+@{
+    ViewBag.Title = "Order Created";
+    Currency currency = ViewBag.Currency;
+}
+
+<div class="top-container">
+    <h1 class="header">Order #@Model.Id</h1>
+</div>
+<section id="order-created" class="page-containter">
+    <p>Status: <span class="@(Model.OrderStatusId == 2 || Model.OrderStatusId == 3 ? "red-text" : "")">@Model.OrderStatus.Name</span></p>
+    <p>Date: <span>@Model.Created.ToString("dd.MM.yyyy HH:MM:ss")</span></p>
+    <p>Final price: <span><b>@Model.TotalPrice.ToString("N2") @currency.Sign</b> (@currency.Name)</span></p>
+    <details>
+        <summary>@Model.PaymentType.Name</summary>
+        <span>@Model.PaymentType.Desc</span>
+    </details>
+    <details>
+        <summary>Shipping info</summary>
+        <p><span>@Model.ShippingFirstName @Model.ShippingLastName</span></p>
+        <p><span>@Model.ShippingAddress</span></p>
+        <p><span>@Model.ShippingPostCode @Model.ShippingCity</span></p>
+        <p><span>@Model.ShippingPhone</span></p>
+    </details>
+    @if (ViewBag.IsAuthorized)
+    {
+        <a href="@Url.Action("CancelOrder", new { id = Model.Id })">Cancel order</a>
+    }
+</section>
+
+
+<section id="user-cart">
+    <div class="cart-products">
+        <table>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Products)
+                {
+                    <tr>
+                        <td></td>
+                        <td data-label="Product">
+                            <div class="cart-product-image">
+                                <img src="~/Upload/img/products/thumbnails/@item.Product.Thumbnail" />
+                            </div>
+                            <a class="cart-product-link" href="@Url.Action("Product", "Shop", new { id = item.Product.Id })">@item.Product.Name</a>
+                        </td>
+                        <td data-label="Price">@item.Product.Price.ToString("N2") @currency.Sign</td>
+                        <td data-label="Quantity" style="text-align: center">
+                            @item.Count
+                        </td>
+                        <td data-label="Subtotal">
+                            <span class="item-subtotal">@item.Subtotal.ToString("N2") @currency.Sign</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

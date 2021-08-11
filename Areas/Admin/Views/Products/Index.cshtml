@@ -1,0 +1,108 @@
+﻿@model List<Shop.Models.Product>
+@{
+    ViewBag.Title = "Products";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="main-header">
+            <h4>Products</h4>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="card card-block p-40" id="products">
+
+                @if (Model.Any())
+                {
+                    <table id="admin_products" class="table m-b-0 photo-table">
+                        <thead>
+                            <tr class="text-uppercase">
+                                <th>Photo</th>
+                                <th>Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Options</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var product in Model)
+                            {
+                                <tr>
+                                    <th>
+                                        <img class="img-fluid" src="~/Upload/img/products/thumbnails/@product.Thumbnail" alt="Product">
+                                    </th>
+                                    <td>
+                                        <a href="@Url.Action("Edit", "Products", new { id = product.Id })">@product.Name</a>
+                                        <p><i class="icofont icofont-clock-time"></i>@product.Created.ToString("dd.MM.yyyy HH:mm:ss")</p>
+                                    </td>
+                                    @if (product.Category != null)
+                                    {
+                                        <td>@product.Category.Name</td>
+                                    }
+                                    else
+                                    {
+                                        <td>Uncategorized</td>
+                                    }
+                                    <td>@product.Price @product.Currency.Sign</td>
+                                    <td>
+                                        <a href="@Url.Action("Edit", "Products", new { id = product.Id })" class="text-info"><i class="ti-pencil-alt"></i></a>
+                                        @using (Html.BeginForm("Delete", "Products", FormMethod.Post, new { @class = "d-inline" }))
+                                        {
+                                            <input type="hidden" name="id" value="@product.Id"/>
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-link delete-product" style="box-shadow: none; padding: 4px;"><i class="ti-trash text-danger"></i></button>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                }
+                else
+                {
+                    <p class="text-center display-4">No products found. <a href="@Url.Action("Add", "Products")">Add one</a></p>
+                }
+                <script>
+                    $(document).ready(function () {
+                        $('#admin_products').DataTable();
+
+                        $(document).on('click', '.delete-product', function (e) {
+                            e.preventDefault();
+                            //var link = $(this).attr("href")
+                            var form = $(this).parent();
+
+                            bootbox.confirm({
+                                title: "Delete this product?",
+                                message: "Do you want to delete this product? This cannot be undone.",
+                                buttons: {
+                                    cancel: {
+                                        label: 'No'
+                                    },
+                                    confirm: {
+                                        label: 'Yes',
+                                        className: 'btn-danger m-l-20'
+                                    }
+                                },
+                                callback: function (result) {
+                                    if (result) {
+                                        //window.location = link;
+                                        //form.submit();
+                                        form.submit();
+                                    }
+                                }
+                            }).find('.modal-content').css({
+                                'margin-top': function () {
+                                    var w = $(window).height();
+                                    var b = $(".modal-dialog").height();
+                                    var h = (w - b) / 2 - 100;
+                                    return h + "px";
+                                }
+                            });
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+</div>

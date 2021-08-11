@@ -1,0 +1,153 @@
+﻿@using Shop.Models
+@using Shop.Models.ViewModels
+
+@model AddProductViewModel
+@{
+    ViewBag.Title = "Add Product";
+    List<CategoryTree> categoryTree = ViewBag.CategoryTree;
+    PrintT(categoryTree);
+    Currency currency = ViewBag.Currency;
+}
+
+@functions
+{
+    private List<string> options = new List<string>();
+
+    // Categoty tree to list of html options, no JavaScript way
+    public void PrintT(List<CategoryTree> items)
+    {
+        foreach (var item in items)
+        {
+            string space = "";
+            if (item.Category.ParentCategoryId != null)
+                space = "&nbsp;&nbsp; ";
+
+            options.Add($"<option value=\"{item.Category.Id}\">{space}{item.Category.Name}</option>\n");
+
+            if (item.SubCategories.Count > 0)
+                PrintT(item.SubCategories);
+        }
+    }
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="main-header">
+            <h4>Add Product</h4>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card card-block p-40">
+                @using (Html.BeginForm("Add", "Products", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    // Name
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Name)
+                        @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                    </div>
+
+                    // Category
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.CategoryId)
+                        <select name="CategoryId" class="form-control" id="CategoryId">
+                            <option value="">Uncategorized</option>
+                            @foreach (string option in options)
+                            {
+                                @Html.Raw(option)
+                            }
+                        </select>
+                        @Html.ValidationMessageFor(m => m.CategoryId)
+                    </div>
+                    <script>
+                        $(document).ready(function () {
+                            $("#CategoryId").select2();
+                        });
+                    </script>
+
+                    // Price
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Price) (@currency.Sign)
+                        @Html.TextBoxFor(m => m.Price, new { @class = "form-control", @type = "number", @min = "0" })
+                        @Html.ValidationMessageFor(m => m.Price, "", new { @class = "text-danger" })
+                    </div>
+
+                    // Thumbnail
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Thumbnail) <br />
+                        @Html.TextBoxFor(m => m.Thumbnail, new { type = "file" })<br />
+                        @Html.ValidationMessageFor(m => m.Thumbnail, "", new { @class = "text-danger" })
+                    </div>
+
+                    // Description
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Description) <br />
+                        @Html.TextAreaFor(m => m.Description, new { @class = "form-control", @rows = 5 })
+
+                        @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+                    </div>
+
+                    // Images
+                    @Html.LabelFor(m => m.Images) <br />
+                    <div class="form-group product_images col-md-12 p-0">
+                        <div class="image-wrap col-md-4 p-5">
+                            <div class="file p-0">
+                                <input class="img-upload" name="Images" type="file" value="">
+                                <div class="upload-info">
+                                    <img class="output_image" />
+                                </div>
+                                <a href="#" class="reset_input text-danger"><i class="ti-close"></i></a>
+                                <span class="add_title"><i class="ti-plus"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    @Html.ValidationMessageFor(m => m.Images, "", new { @class = "text-danger" })
+
+                    // JS: Product images
+                    <script type="text/javascript">
+                        window.reset = function (e) {
+                            e.wrap('<form>').closest('form').get(0).reset();
+                            e.unwrap();
+                        }
+                        var inputHtml = $(".image-wrap").html();
+
+                        $(document).ready(function () {
+                            $(document).on("change", ".img-upload", function (event) {
+                                //$(this).next(".upload-info").html("changed :)");
+                                //preview_image(event);
+                                var input = $(this);
+                                //reset(input);
+                                var reader = new FileReader();
+                                reader.onload = function () {
+                                    input.next(".upload-info").children(".output_image").attr("src", reader.result);
+                                    input.next(".upload-info").children(".output_image").show();
+                                    input.parent().children(".reset_input").show();
+                                    input.parent().children(".add_title").hide();
+                                    insert_input();
+                                }
+                                reader.readAsDataURL(event.target.files[0]);
+                            });
+                            $(document).on("click", ".reset_input", function (event) {
+                                event.preventDefault();
+                                var input = $(this).parent().children(".img-upload");
+                                reset(input);
+                                $(this).parent().parent().remove();
+                            });
+                        });
+                        function insert_input() {
+                            //inputHtml.clone().appendTo(".product_images");
+                            var html = "<div class=\"image-wrap col-md-4 p-5\">" + inputHtml + "</div>";
+                            $(".product_images").append(html);
+                        }
+                    </script>
+
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-primary" value="Insert" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,25 @@
+﻿<input type="search" name="search" class="form-control search-txt width-100" placeholder="Search..."/>
+<div id="search-products" class="width-100" style="position: relative;">
+    @{
+        Html.RenderAction("SearchProducts");
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+        $(document).on("keyup", ".search-txt", function () {
+            $.ajax({
+                url: '@Url.Action("SearchProducts", "OrderProduct")',
+                data: {
+                    search: $(this).val()
+                },
+                method: 'get',
+                dataType: 'html',
+            }).done(function (data) {
+                $("#search-products").html(data);
+            });
+        });
+    });
+</script>
+<style>
+</style>

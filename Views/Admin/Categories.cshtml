@@ -1,0 +1,159 @@
+﻿@model Shop.Models.ViewModels.AddCategoryViewModel
+@{
+    ViewBag.Title = "Categories";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="main-header">
+            <h4>Categories</h4>
+        </div>
+
+        <style>
+            /*div.ui-growl {
+                left: 50%;
+                right: 0;
+                margin-left: -150px;
+            }*/
+            .category {
+                cursor: pointer;
+            }
+            .category:hover {
+                text-decoration: underline;
+                color: #00a9ff;
+            }
+            .delete-category:hover {
+                color: #ff4949;
+                width: 40px;
+            }
+        </style>
+
+        <div class="col-lg-4 col-md-6">
+            <div class="card card-block p-40">
+                <h4>Add Category</h4>
+                <br />
+                @using (Html.BeginForm("", "api/category/insert", FormMethod.Post, new { id = "AddCategoryForm" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Name)
+                        @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.ParentCategoryId)
+                        <select name="ParentCategoryId" class="form-control" id="ParentCategoryId">
+                        <select name="ParentCategoryId" class="form-control" id="ParentCategoryId">
+                            <option value="">Root</option>
+                        </select>
+                        @Html.ValidationMessageFor(m => m.ParentCategoryId)
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Active)
+                        <div class="form-check">
+                            @Html.RadioButtonFor(m => m.Active, true, new { @class = "form-check-input m-l-15", @id = "status1", @checked = "checked" })
+                            <label class="form-check-label m-l-15" for="status1">
+                                Active
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            @Html.RadioButtonFor(m => m.Active, false, new { @class = "form-check-input m-l-15", @id = "status2", })
+                            <label class="form-check-label m-l-15" for="status2">
+                                Disabled
+                            </label>
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Active)
+                    </div>
+                    <button type="submit" class="btn btn-primary col-md-12">Submit</button>
+                }
+            </div>
+        </div>
+        <div class="col-lg-8 col-md-6">
+            <div class="card p-40">
+                <style>
+
+                    .ul-inner {
+                        border-left: 1px solid #808080;
+                        border-radius: 0;
+                    }
+
+                    .li-item {
+                        border: none;
+                        padding: 7px 30px;
+                        padding-right: 0;
+                    }
+                </style>
+                <h4>Category List</h4>
+                <br />
+                <ul id="menu" class="list-group"></ul>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        LoadCategories();
+
+                        $(document).on('click', '.category', function () {
+                            $.ajax({
+                                url: '@Url.Action("CategoryUpdateForm", "Admin")',
+                                data: {
+                                    id: $(this).attr("category-id")
+                                },
+                                method: 'get',
+                                dataType: 'html',
+                            }).done(function (data) {
+                                $("#edit-category").html(data);
+                                $("#editCategoryModal").show();
+                            });
+                        });
+
+                        $("#editCategoryModal .close").click(closeModal);
+
+                        function closeModal() {
+                            $("#editCategoryModal").hide();
+                        }
+
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+    <style>
+        #editCategoryModal {
+            display: none;
+            padding-top: 200px;
+        }
+
+        #editCategoryModal:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgb(0 0 0 / 0.50);
+            backdrop-filter: blur(4px);
+            display: block;
+        }
+
+        #editCategoryModal .close {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+        }
+    </style>
+
+    <div class="modal" id="editCategoryModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Edit Category</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div id="edit-category" class="modal-body p-40">
+                    @*@Html.Partial("EditCategoryForm")*@
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

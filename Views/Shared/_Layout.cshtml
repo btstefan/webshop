@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="~/Content/CSS/main.min.css" />
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <link rel="stylesheet" href="~/Content/CSS/toastr/toastr.css" />
+    <script type="text/javascript" src="~/Scripts/toastr/toastr.js"></script>
+    <script type="text/javascript" src="~/Scripts/main.js"></script>
+
+    <title>Shop - @ViewBag.Title</title>
+</head>
+<body>
+    <!-- Side nav -->
+    <nav class="side_nav">
+        <!-- Logo -->
+        <div class="logo">
+            <h1><a href="@Url.Action("Index", "Home")"><i class="fas fa-tags" style="font-size: 20px;"></i> Shop</a></h1>
+        </div>
+        <!-- Side menu content -->
+        <div class="menu">
+            <ul class="top">
+                <li class="category-item">
+                    <a href="@Url.Action("Index", "Home")" title="Home">Home</a>
+                </li>
+                <!-- Category nav -->
+                <li class="category-item">
+                    <a href="#">Products <i class="fas fa-angle-right"></i></a>
+                    @{
+                        Html.RenderAction("CategoryPartial", "Home");
+                    }
+                </li>
+            </ul>
+        </div>
+        <!-- Cart link -->
+        <div id="cart">
+            @{
+                Html.RenderAction("CartMenu", "Cart");
+            }
+        </div>
+        <div class="search">
+            <!-- User links -->
+            <div class="user-links">
+                @Html.Partial("_LoginPartial")
+            </div>
+            <!-- Search -->
+            @using (Html.BeginForm("Search", "Shop", FormMethod.Get, new { id = "main-search" }))
+            {
+                <input name="search" type="search" placeholder="Search..." />
+                <button type="submit"><i class="fas fa-search"></i></button>
+            }
+        </div>
+        <!-- Toggle nav btn -->
+        <div id="closeNav" class="close-side-nav active-nav">
+            <div class="close-div">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="content">
+        <!-- Main content -->
+        <div class="main-content">
+            @RenderBody()
+        </div>
+
+        <!-- Footer -->
+        <div id="footer">
+            <p class="name">2021 &copy; <a href="https://sklopi.com" target="_blank">Stefan Petrović</a></p>
+            <p class="email"><a href="mailto: stefan.electro@gmail.com" target="_blank">stefan.electro@gmail.com</a></p>
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+

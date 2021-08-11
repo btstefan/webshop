@@ -1,0 +1,128 @@
+﻿@model Shop.Models.Order
+@{
+    ViewBag.Title = "Details";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="main-header">
+            <h4>Order Details</h4><br/>
+            <a href="@Url.Action("Index")" class="btn btn-info m-t-10">Return</a>
+            <a href="@Url.Action("Edit", new { Model.Id })" class="btn btn-primary m-t-10">Edit</a>
+            <a href="@Url.Action("Delete", new { Model.Id })" class="btn btn-danger m-t-10">Delete</a>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card card-block p-40" id="products">
+                <h1 class="text-info m-l-10" style="font-size: 1.2rem">Details</h1>
+                <table class="table m-b-40 m-t-20">
+                    <tbody>
+                        <tr>
+                            <td>Id</td>
+                            <td>@Model.Id</td>
+                        </tr>
+                        <tr>
+                            <td><span class="p-t-10" style="display: block;">Status</span></td>
+                            <td>
+                                @using (Html.BeginForm("ChangeStatus", "Orders", FormMethod.Post, new { id = "status-form" }))
+                                {
+                                    @Html.AntiForgeryToken();
+                                    @Html.HiddenFor(o => o.Id)
+                                    @Html.DropDownListFor(o => o.OrderStatusId, new SelectList(ViewBag.StatusTypes, "Id", "Name"), new { @class = "form-control select-status" })
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Created</td>
+                            <td>@Model.Created.ToString("dd.MM.yyyy HH:mm:ss tt")</td>
+                        </tr>
+                        <tr>
+                            <td>Modified</td>
+                            <td>@(Model.Modified != null ? $"{Model.Modified.Value.ToString("dd.MM.yyyy HH:mm:ss tt")}" : "-")</td>
+                        </tr>
+                        <tr>
+                            <td>Total:</td>
+                            <td><b class="text-info">@Model.TotalPrice.ToString("N2") @Model.Currency.Sign</b></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h1 class="text-info m-l-10" style="font-size: 1.2rem">Shipping details</h1>
+                <table class="table table-dark m-t-20">
+                    <tbody>
+                        <tr>
+                            <td>First Name</td>
+                            <td>@Model.ShippingFirstName</td>
+                        </tr>
+                        <tr>
+                            <td>Last Name</td>
+                            <td>@Model.ShippingLastName</td>
+                        </tr>
+                        <tr>
+                            <td>Address</td>
+                            <td>@Model.ShippingAddress</td>
+                        </tr>
+                        <tr>
+                            <td>City</td>
+                            <td>@Model.ShippingCity</td>
+                        </tr>
+                        <tr>
+                            <td>Post code</td>
+                            <td>@Model.ShippingPostCode</td>
+                        </tr>
+
+                        <tr>
+                            <td>Phone</td>
+                            <td>@Model.ShippingPhone</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="card card-block p-40" id="products">
+                <h1 class="text-info m-l-10 m-b-40" style="font-size: 1.2rem">Products</h1>
+                <table class="table m-b-0 photo-table">
+                    <thead>
+                        <tr class="text-uppercase">
+                            <th></th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var product in Model.Products)
+                        {
+                            <tr>
+                                <th>
+                                    @if (product.Product != null)
+                                    {
+                                        <img class="img-fluid" src="~/Upload/img/products/thumbnails/@product.Product.Thumbnail" alt="Product">
+                                    }
+                                </th>
+                                <td>
+                                    <a href="@Url.Action("Edit", "Products", new { id = product.ProductId })" target="_blank">@product.Name</a>
+                                </td>
+                                <td class="text-nowrap">@product.Price @product.Currency.Sign</td>
+                                <td class="text-center">@product.Count</td>
+                                <td class="text-nowrap">@product.Subtotal @product.Currency.Sign</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $(".select-status").change(function () {
+                $("#status-form").submit();
+            });
+        });
+    </script>
+</div>

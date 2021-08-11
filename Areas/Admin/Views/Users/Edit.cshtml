@@ -1,0 +1,83 @@
+﻿@using Shop.Models
+@using Shop.Models.ViewModels
+@model ApplicationUser
+@{
+    ViewBag.Title = "Edit User";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="main-header">
+            <h4>Edit user</h4>
+        </div>
+
+        @using (Html.BeginForm("Edit", "Users", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="col-lg-6">
+                <div class="card card-block p-40">
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(m => m.Id)
+
+                    <div class="form-group col-md-6">
+                        @Html.LabelFor(m => m.FirstName)
+                        @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        @Html.LabelFor(m => m.LastName)
+                        @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group col-md-12">
+                        @Html.LabelFor(m => m.Address)
+                        @Html.TextBoxFor(m => m.Address, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group col-md-4">
+                        @Html.LabelFor(m => m.PostCode)
+                        @Html.TextBoxFor(m => m.PostCode, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.PostCode, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group col-md-8">
+                        @Html.LabelFor(m => m.City)
+                        @Html.TextBoxFor(m => m.City, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.City, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group col-md-12">
+                        @Html.LabelFor(m => m.Email)
+                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group col-md-12">
+                        @Html.LabelFor(m => m.PhoneNumber)
+                        @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group col-md-12">
+                        <input type="submit" class="btn btn-primary" value="Update" />
+                        <a class="m-l-10" href="@Url.Action("Index", "Users")">Cancel</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card card-block p-40">
+                    @if (Model.Orders != null && Model.Orders.Count > 0)
+                    {
+                        <h4 class="m-l-10 txt-info" style="font-size: 16px">Orders</h4>
+                        foreach (var order in Model.Orders)
+                        {
+                            <a href="@Url.Action("Details", "Orders", new { order.Id })" target="_blank" class="btn btn-default w-100 p-20 m-10">@order.Created.ToString("dd.MM.yyyy HH:mm:ss tt")</a>
+                        }
+                    }
+                    else
+                    {
+                        <h4 class="m-l-10 txt-info" style="font-size: 16px">No orders.</h4>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>

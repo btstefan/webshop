@@ -1,0 +1,23 @@
+﻿@model List<Shop.Models.Product>
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="home-page">
+    @foreach (var product in Model)
+    {
+        <div class="home-product">
+            <div class="new-tag"><span>New</span></div>
+            <img class="thumbnail" src="~/Upload/img/products/thumbnails/@product.Thumbnail" />
+            <div class="product-info">
+                <p class="name">@product.Name</p>
+                <p class="price">@product.Price @product.Currency.Sign</p>
+            </div>
+            <div class="addToCart">
+                <a class="addToCart-btn" href="@Url.Action("AddToCart", "Cart", new { id = product.Id })" title="Add to cart"><i class="fas fa-cart-plus"></i></a>
+            </div>
+            <div class="animation-circle"></div>
+            <a href="@Url.Action("Product", "Shop", new { id = product.Id })" class="product-link" title="@product.Name"></a>
+        </div>
+    }
+</div>

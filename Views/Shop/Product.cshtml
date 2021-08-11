@@ -1,0 +1,112 @@
+﻿@using Shop.Models
+@model Product
+@{
+    ViewBag.Title = Model.Name;
+    List<Category> parents = ViewBag.Parents;
+    List<CartItem> cart = (List<CartItem>)Session["cart"];
+}
+
+<div class="top-container">
+    @if (Model.CategoryId != null)
+    {
+        <h1>@Model.Category.Name</h1>
+    }
+    else
+    {
+        <h1>Uncategorized</h1>
+    }
+
+    <div class="path">
+        @if (parents != null && parents.Count > 0)
+        {
+            foreach (var p in parents)
+            {
+                <a class="ctg-link" href="@Url.Action("Products", "Shop", new { categoryId = p.Id })">@p.Name</a><i class="fas fa-long-arrow-alt-right"></i>
+            }
+        }
+        @if (Model.CategoryId != null)
+        {
+            <a class="ctg-link active-ctg" href="@Url.Action("Products", "Shop", new { categoryId = Model.Category.Id })">@Model.Category.Name</a>
+        }
+        else
+        {
+            <a class="ctg-link active-ctg" href="@Url.Action("Products", "Shop", new { categoryId = 0 })">Uncategorized</a>
+        }
+    </div>
+</div>
+
+<section class="product-page">
+    <div class="product_gallery">
+        @foreach (var image in Model.ProductImages)
+        {
+            <div class="product_image">
+                <input type="radio" id="img-@image.Id" name="gallery" class="gallery_selector" />
+                <div class="gallery_main">
+                    <img class="gallery_img" src="~/Upload/img/products/@image.Source" alt="@Model.Name" />
+                </div>
+                <label for="img-@image.Id" class="gallery_thumb">
+                    <img src="~/Upload/img/products/@image.Source" alt="@Model.Name" width="150" />
+                </label>
+            </div>
+        }
+    </div>
+
+
+    <div class="product-details">
+        <h2>@Model.Name</h2>
+        <p class="product-price">@Model.Price @Model.Currency.Sign</p>
+        <p class="product-description">@Html.Raw(Model.Description.Replace(Environment.NewLine, "<br/>"))</p>
+
+        @using (Html.BeginForm("AddToCart", "Cart", FormMethod.Post, new { id = "add-product" }))
+        {
+            if (cart == null || cart.FindIndex(item => item.Product.Id == Model.Id) < 0)
+            {
+                <input type="hidden" name="id" value="@Model.Id" />
+                <div class="product-quantity">
+                    <button type="button" class="minus">-</button>
+                    <input class="product-quantity-value" name="qnt" type="number" value="1" min="1" />
+                    <button type="button" class="plus">+</button>
+                </div>
+                <button type="submit" class="add-to-cart"><i class="fas fa-cart-plus"></i> &nbsp; Add to cart</button>
+            }
+            else
+            {
+                <a href="@Url.Action("Index", "Cart")" class="add-to-cart added"><span><i class="fas fa-shopping-cart"></i> &nbsp; View Cart</span></a><br/>
+            }
+        }
+    </div>
+
+    @section scripts {
+        <script>
+            $(document).ready(function () {
+                // gallery
+                $(".product_image:first-child input").attr('checked', 'checked');
+
+                // ajax add product to cart
+                $("#add-product").submit(function (e) {
+                    e.preventDefault();
+
+                    var url = $(this).attr("action");
+                    var data = $(this).serialize();
+
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: data,
+                        dataType: "json",
+                    })
+                        .done(function (data) {
+                            if (!data.Success) {
+                                SendMessage(data.Message, "info");
+                            }
+                            $("#cart").load(location.href + " #cart>*", "");
+                            $("#add-product").fadeOut(500, () => {
+                                $("#add-product").load(location.href + " #add-product>*", "")
+                            });
+                            $("#add-product").fadeIn();
+                        });
+                });
+            });
+        </script>
+    }
+</section>

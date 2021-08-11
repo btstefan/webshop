@@ -1,0 +1,38 @@
+﻿@model Shop.Models.Currency
+@{
+    ViewBag.Title = "Currency";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="main-header">
+            <h4>Currency</h4>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card card-block p-40">
+                @using (Html.BeginForm("Currency", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(m => m.Id)
+
+                    // Name
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Name)
+                        @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Sign)
+                        @Html.TextBoxFor(m => m.Sign, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Sign, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-primary" value="Save" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

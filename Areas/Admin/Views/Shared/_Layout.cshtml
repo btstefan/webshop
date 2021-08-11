@@ -1,0 +1,315 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Admin - @ViewBag.Title</title>
+    <!-- HTML5 Shim and Respond.js IE9 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+      <![endif]-->
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+
+
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+    <!-- required includes -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+
+    <!-- bootbox.js at 4.4.0 -->
+    <script src="https://rawgit.com/makeusabrew/bootbox/f3a04a57877cab071738de558581fbc91812dce9/bootbox.js"></script>
+    <link rel="stylesheet" href="~/Content/CSS/animate.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+    <!-- Favicon icon -->
+    <link rel="shortcut icon" href="~/Content/Admin/assets/images/favicon.png" type="image/x-icon">
+    <link rel="icon" href="~/Content/Admin/assets/images/favicon.ico" type="image/x-icon">
+    <link href="~/Content/CSS/admin.min.css" rel="Stylesheet" type="text/css" />
+
+    <!-- Google font-->
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu:400,500,700" rel="stylesheet">
+
+    <!-- themify -->
+    <link rel="stylesheet" type="text/css" href="~/Content/Admin/assets/icon/themify-icons/themify-icons.css">
+
+    <!-- iconfont -->
+    <link rel="stylesheet" type="text/css" href="~/Content/Admin/assets/icon/icofont/css/icofont.css">
+
+    <!-- simple line icon -->
+    <link rel="stylesheet" type="text/css" href="~/Content/Admin/assets/icon/simple-line-icons/css/simple-line-icons.css">
+
+    <!-- Required Fremwork -->
+    <link rel="stylesheet" type="text/css" href="~/Content/Admin/assets/plugins/bootstrap/css/bootstrap.min.css">
+
+    <!-- Chartlist chart css -->
+    <!--<link rel="stylesheet" href="~/Content/Admin/assets/plugins/chartist/dist/chartist.css" type="text/css" media="all">-->
+    <!-- Weather css -->
+    <link href="~/Content/Admin/assets/css/svg-weather.css" rel="stylesheet">
+
+    <!-- Style.css -->
+    <link rel="stylesheet" type="text/css" href="~/Content/Admin/assets/css/main.css">
+
+    <!-- Responsive.css-->
+    <link rel="stylesheet" type="text/css" href="~/Content/Admin/assets/css/responsive.css">
+
+
+    <script src="~/Scripts/admin.js"></script>
+    <script>
+        $(document).ready(function () {
+            var message = '@TempData["msg"]';
+            if (message) {
+                SendMessage(message, 'info');
+            }
+        });
+    </script>
+
+</head>
+
+<body class="sidebar-mini fixed">
+
+
+    <div class="loader-bg">
+        <div class="loader-bar">
+        </div>
+    </div>
+    <div class="wrapper">
+        <!-- Navbar-->
+        <header class="main-header-top hidden-print">
+            <a href="#!" class="logo">Admin panel</a>
+            <nav class="navbar navbar-static-top">
+                <a href="#!" data-toggle="offcanvas" class="sidebar-toggle"></a>
+                <!-- Sidebar toggle button-->
+                <!-- Navbar Right Menu-->
+                <div class="navbar-custom-menu f-right">
+
+                    <ul class="top-nav">
+                        <!-- window screen -->
+                        <li class="pc-rheader-submenu">
+                            <a href="#!" class="drop icon-circle" onclick="javascript:toggleFullScreen()">
+                                <i class="icon-size-fullscreen"></i>
+                            </a>
+
+                        </li>
+                        <!-- User Menu-->
+                        <li class="dropdown">
+                            <a href="#!" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle drop icon-circle drop-image">
+                                <span>@HttpContext.Current.User.Identity.Name <i class=" icofont icofont-simple-down"></i></span>
+                            </a>
+                            <ul class="dropdown-menu settings-menu">
+                                <li><a href="@Url.Action("Edit", "Users", new { email = HttpContext.Current.User.Identity.Name })"><i class="icon-user"></i> Profile</a></li>
+                                <li>
+                                    @using (Html.BeginForm("LogOff", "Account", new { area = "" }, FormMethod.Post, new {id = "logoutForm", @class = "navbar-right" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <a href="javascript:document.getElementById('logoutForm').submit()"><i class="icon-lock"></i> Logout</a>
+                                    }
+                                </li>
+
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Side-Nav-->
+        <aside class="main-sidebar hidden-print ">
+            <section class="sidebar" id="sidebar-scroll">
+                <!-- Sidebar Menu-->
+                <ul class="sidebar-menu">
+                    <li class="nav-level">--- Navigation</li>
+                    <li class="active treeview">
+                        <a class="waves-effect waves-dark" href="@Url.Action("Index", "Home")">
+                            <i class="icon-speedometer"></i><span> Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-level">--- Shop</li>
+                    <li class="treeview">
+                        <a class="waves-effect waves-dark" href="@Url.Action("Index", "Categories")"><i class="ti-tag"></i><span> Categories</span></a>
+                    </li>
+
+                    <li class="treeview">
+                        <a class="waves-effect waves-dark" href="#"><i class="icon-briefcase"></i><span> Products</span><i class="icon-arrow-down"></i></a>
+                        <ul class="treeview-menu">
+                            <li><a class="waves-effect waves-dark" href="@Url.Action("Add", "Products")"><i class="icon-arrow-right"></i> Add new</a></li>
+                            <li><a class="waves-effect waves-dark" href="@Url.Action("Index", "Products")"><i class="icon-arrow-right"></i> All products</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="treeview">
+                        <a class="waves-effect waves-dark" href="@Url.Action("Index", "Orders")"><i class="ti-shopping-cart"></i><span> Orders</span></a>
+                    </li>
+
+                    <li class="treeview">
+                        <a class="waves-effect waves-dark" href="@Url.Action("Index", "Currency")"><i class="ti-money"></i><span> Currency</span></a>
+                    </li>
+
+                    <li class="nav-level">--- Accounts</li>
+
+                    <li class="treeview">
+                        <a class="waves-effect waves-dark" href="@Url.Action("Index", "Users", new { test = "Test" })"><i class="ti-settings"></i><span> Users</span></a>
+                    </li>
+                </ul>
+            </section>
+        </aside>
+        
+        <div class="showChat_inner">
+            <div class="media chat-inner-header">
+                <a class="back_chatBox">
+                    <i class="icofont icofont-rounded-left"></i> Josephin Doe
+                </a>
+            </div>
+
+            <div class="media chat-messages">
+                <div class="media-body chat-menu-reply">
+                    <div class="">
+                        <p class="chat-cont">I'm just looking around. Will you tell me something about yourself?</p>
+                        <p class="chat-time">8:20 a.m.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="media chat-reply-box">
+                <div class="md-input-wrapper">
+                    <input type="text" class="md-form-control" id="inputEmail" name="inputEmail">
+                    <label>Share your thoughts</label>
+                    <span class="highlight"></span>
+                    <span class="bar"></span> <button type="button" class="chat-send waves-effect waves-light">
+                        <i class="icofont icofont-location-arrow f-20 "></i>
+                    </button>
+
+                    <button type="button" class="chat-send waves-effect waves-light">
+                        <i class="icofont icofont-location-arrow f-20 "></i>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+        <!-- Sidebar chat end-->
+        <div class="content-wrapper">
+            <!-- Container-fluid starts -->
+            <!-- Main content starts -->
+            @RenderBody()
+        </div>
+    </div>
+
+    <div class="custom-notify">
+
+    </div>
+
+
+    <!-- Warning Section Starts -->
+    <!-- Older IE warning message -->
+    <!--[if lt IE 9]>
+       <div class="ie-warning">
+           <h1>Warning!!</h1>
+           <p>You are using an outdated version of Internet Explorer, please upgrade <br/>to any of the following web browsers to access this website.</p>
+           <div class="iew-container">
+               <ul class="iew-download">
+                   <li>
+                       <a href="http://www.google.com/chrome/">
+                           <img src="assets/images/browser/chrome.png" alt="Chrome">
+                           <div>Chrome</div>
+                       </a>
+                   </li>
+                   <li>
+                       <a href="https://www.mozilla.org/en-US/firefox/new/">
+                           <img src="assets/images/browser/firefox.png" alt="Firefox">
+                           <div>Firefox</div>
+                       </a>
+                   </li>
+                   <li>
+                       <a href="http://www.opera.com">
+                           <img src="assets/images/browser/opera.png" alt="Opera">
+                           <div>Opera</div>
+                       </a>
+                   </li>
+                   <li>
+                       <a href="https://www.apple.com/safari/">
+                           <img src="assets/images/browser/safari.png" alt="Safari">
+                           <div>Safari</div>
+                       </a>
+                   </li>
+                   <li>
+                       <a href="http://windows.microsoft.com/en-us/internet-explorer/download-ie">
+                           <img src="assets/images/browser/ie.png" alt="">
+                           <div>IE (9 & above)</div>
+                       </a>
+                   </li>
+               </ul>
+           </div>
+           <p>Sorry for the inconvenience!</p>
+       </div>
+       <![endif]-->
+    <!-- Warning Section Ends -->
+    <!-- Required Jqurey -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+
+    <!-- Required Fremwork -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-growl/1.0.0/jquery.bootstrap-growl.min.js"></script>
+    <script src="~/Content/Admin/assets/plugins/tether/dist/js/tether.min.js"></script>
+    <script src="~/Content/Admin/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+
+
+    <!-- Scrollbar JS-->
+    <script src="~/Content/Admin/assets/plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
+    <script src="~/Content/Admin/assets/plugins/jquery.nicescroll/jquery.nicescroll.min.js"></script>
+
+    <!--classic JS-->
+    <script src="~/Content/Admin/assets/plugins/classie/classie.js"></script>
+
+    
+    <!--datatables JS-->
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.10.11/sorting/date-eu.js"></script>
+
+    <!-- notification -->
+    @*<script src="~/Content/Admin/assets/plugins/notification/js/bootstrap-growl.min.js"></script>*@
+
+
+    <!-- Counter js  -->
+    <script src="~/Content/Admin/assets/plugins/waypoints/jquery.waypoints.min.js"></script>
+    <script src="~/Content/Admin/assets/plugins/countdown/js/jquery.counterup.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+
+    <!-- Echart js -->
+    <script src="~/Content/Admin/assets/plugins/charts/echarts/js/echarts-all.js"></script>
+
+    @*<script src="https://code.highcharts.com/highcharts.js"></script>
+        <script src="https://code.highcharts.com/modules/exporting.js"></script>
+        <script src="https://code.highcharts.com/highcharts-3d.js"></script>*@
+
+    <!-- custom js -->
+    <script type="text/javascript" src="~/Content/Admin/assets/js/main.min.js"></script>
+    <script type="text/javascript" src="~/Content/Admin/assets/pages/dashboard.js"></script>
+    <script type="text/javascript" src="~/Content/Admin/assets/pages/elements.js"></script>
+    <script src="~/Content/Admin/assets/js/menu.min.js"></script>
+    <script>
+        var $window = $(window);
+        var nav = $('.fixed-button');
+        $window.scroll(function () {
+            if ($window.scrollTop() >= 200) {
+                nav.addClass('active');
+            }
+            else {
+                nav.removeClass('active');
+            }
+        });
+    </script>
+
+</body>
+
+</html>
+

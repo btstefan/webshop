@@ -1,0 +1,72 @@
+﻿@using Shop.Models
+@{
+    ViewBag.Title = "Cart";
+    List<CartItem> cartItems = ViewBag.CartItems;
+    double total = ViewBag.Total;
+    Currency currency = ViewBag.Currency;
+}
+
+<div class="top-container">
+    <h1 class="header">Cart (@(cartItems != null ? cartItems.Count : 0 ))</h1>
+</div>
+
+<section id="user-cart">
+    @if (cartItems != null && cartItems.Count > 0)
+    {
+        <div class="cart-products">
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in cartItems)
+                    {
+                        <tr>
+                            <td>
+                                <a href="@Url.Action("Remove", "Cart", new { id = item.Product.Id })" class="cart-remove-product">+</a>
+                            </td>
+                            <td data-label="Product">
+                                <div class="cart-product-image">
+                                    <img src="~/Upload/img/products/thumbnails/@item.Product.Thumbnail" />
+                                </div>
+                                <a class="cart-product-link" href="@Url.Action("Product", "Shop", new { id = item.Product.Id })">@item.Product.Name</a>
+                            </td>
+                            <td data-label="Price">@item.Product.Price.ToString("N2") @currency.Sign</td>
+                            <td data-label="Quantity">
+                                <div class="product-quantity">
+                                    <button type="button" class="minus">-</button>
+                                    <input class="product-quantity-value cart-item-qnt" for-product="@item.Product.Id" name="qnt" type="number" value="@item.Quantity" min="1" />
+                                    <button type="button" class="plus">+</button>
+                                </div>
+                            </td>
+                            <td data-label="Subtotal">
+                                @{ 
+                                    var subTotal = item.Product.Price * item.Quantity;
+                                }
+                                <span class="item-subtotal">@subTotal.ToString("N2") @currency.Sign</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="cart-total">
+            <div class="total">
+                Total: <b>@ViewBag.Total.ToString("N2") @currency.Sign</b>
+            </div>
+            <a href="@Url.Action("Index", "Order")" class="order">Checkout</a>
+        </div>
+    }
+    else
+    {
+        <div class="cart-empty">
+            Your cart is empty.
+        </div>
+    }
+</section>
